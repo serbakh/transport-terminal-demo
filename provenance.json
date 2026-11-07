@@ -1,0 +1,14 @@
+{
+  "experiment": "conditions_contract_ml_2026_11_07",
+  "research_commit": "4dfa5d63f737bf0a3d610465a71bd9422c7634b3",
+  "baseline_commit": "b8e2dfdadc81ca2e122bc8881a8db9d3a8e773e1",
+  "provenance": {
+    "predictions_1836.csv": "2f1563d42cc667ec86cb5d066cf4b9ef42d850728efe47800011d7ef6d53960f",
+    "physical_runs.csv": "9897f322aba51ca7c41aca653b612ac1f2b6ced170da0fbb86d6e17952a48203",
+    "daily.csv": "e72a9c1ca04be18d8b8d40375eb7aceea754688d9d796582849bfcc162c90288",
+    "baseline_comparison.csv": "98e48458116b5f4f70a908c78d1d727ee7c9ffaa1845ef6184a3de6ece56db81",
+    "decisions_by_conditions.csv": "0b00c961784df9ed58356a037bc4a2cbde2f434bf9e3e3d7266705e889407cf4",
+    "evaluation.json": "38e3bd1253ced9344c56a6595bbd9eef3ce26f554bdce320a8517e3b01709e4c",
+    "manifest.json": "7d24ed238a19c6a5cb5f21d2783a83e636c95d05a526ab4074bee04827893cf5"
+  }
+}
