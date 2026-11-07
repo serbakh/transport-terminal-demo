@@ -1,3 +1,5 @@
+/* SPDX-FileCopyrightText: 2026 Serhii Bakhariev
+ * SPDX-License-Identifier: AGPL-3.0-or-later */
 'use strict';
 const D=window.STUDY;
 const defaults={fuel:800,truck:1750/12,loader:1900,loaderTime:500/12,scale:100,feeder:6200/12,power:400,mechanic:2000/12};
