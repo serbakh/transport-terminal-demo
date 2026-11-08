@@ -1,0 +1,27 @@
+/* Copyright (c) 2026 Serhii Bakhariev. SPDX-License-Identifier: MIT */
+body[data-screen="forecast"] .kpi-grid,
+body[data-screen="forecast"] .controls,
+body[data-screen="forecast"] #seek,
+body[data-screen="forecast"] header>div:last-child,
+body[data-screen="economics"] .kpi-grid{display:none}
+.view-tabs{margin:0 0 20px;gap:8px;flex-wrap:wrap}
+.model-switch{margin-bottom:12px}
+.supporting-details{border-top:1px solid #344c60;margin:20px 0 0;padding:14px 0;color:#acc3d4;font-size:13px}
+.supporting-details summary{cursor:pointer;color:#d6e5ef;font-weight:600;padding:4px 0}
+.supporting-details[open] summary{margin-bottom:14px}
+.supporting-details .forecast-compare{margin-top:10px}
+.forecast-two{grid-template-columns:minmax(0,1fr)}
+.forecast-inputs{grid-template-columns:repeat(5,minmax(0,1fr))}
+.forecast-inputs .fixed-condition{display:none}
+.forecast-box{min-width:0}
+.replay-action{margin:0 0 18px}
+.economic-content{grid-template-columns:1fr}
+.demo-scope{text-align:center;font-size:12px;margin:25px 18px 0;color:#9db5c7}
+.resource-intro>span{font-size:12px}
+.supporting-details .replay-mode{background:transparent;border:0;padding:0}
+.forecast-cards article{padding:14px}
+.forecast-cards strong{font-size:24px}
+#forecast-recommendation{font-size:20px;color:#75e2d0}
+button:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid #76e9d8;outline-offset:4px}
+@media(max-width:850px){.forecast-inputs{grid-template-columns:repeat(3,minmax(0,1fr))}.forecast-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.forecast-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.forecast-cards strong{font-size:20px}.view-tabs button{flex:1 1 42%;padding:10px 8px}.forecast-head .economic-tag{display:none}#forecast-recommendation{font-size:17px}}

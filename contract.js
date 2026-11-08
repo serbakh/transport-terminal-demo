@@ -41,9 +41,9 @@
       document.querySelector('#forecast-view .forecast-head p').textContent='Нова модель повного циклу · 1836 сценаріїв';
       document.querySelector('#forecast-view .economic-tag').textContent='Вибір за витратами · партія 10 000 т';
       el('forecast-volume').value=10000;el('forecast-target').value=4000;
-      const captions=['ПРОГНОЗ ПЕРШОЇ ДОБИ','КОНТРОЛЬ: СЕРЕДНЄ ПЕРШОЇ ДОБИ','ПРОГНОЗНІ ВИТРАТИ ПАРТІЇ','ДОПУСК ЗА ДОБОВОЮ НОРМОЮ'];
+      const captions=['ПРОГНОЗ ПЕРШОЇ ДОБИ','ПРОГНОЗ ТРИВАЛОСТІ','ПРОГНОЗНІ ВИТРАТИ ПАРТІЇ','ДОПУСК ЗА ДОБОВОЮ НОРМОЮ'];
       document.querySelectorAll('#forecast-view .forecast-cards article>span').forEach((e,i)=>e.textContent=captions[i]);
-      document.querySelectorAll('#forecast-view .forecast-cards article>small')[1].textContent='Середнє п’яти контрольних прогонів';
+      document.querySelectorAll('#forecast-view .forecast-cards article>small')[1].textContent='До завершення перевалки партії';
       document.querySelector('.kpi-grid article>small').textContent='Початковий обсяг партії 10 000 т';
       document.querySelectorAll('#forecast-view .forecast-box h3')[0].textContent='Економічний підбір ресурсів';
       document.querySelectorAll('#forecast-view .forecast-box h3')[1].textContent='Прогноз повного циклу';
@@ -69,13 +69,13 @@
     const p=D.predictions.find(x=>x.configuration===key);if(!p)return;
     const c=D.controls[key],context=p.context,eligible=D.predictions.filter(x=>x.context===context&&x.admissible).sort((a,b)=>cost(a)-cost(b)||a.configuration.localeCompare(b.configuration));
     const best=eligible[0],reference=D.predictions.filter(x=>x.context===context&&D.controls[x.configuration].passed===5).sort((a,b)=>cost(D.controls[a.configuration])-cost(D.controls[b.configuration]))[0];
-    el('forecast-error').hidden=true;el('forecast-q').textContent=fmt(p.first_day_tons)+' т';el('forecast-observed').textContent=fmt(c.first_day_tons)+' т';el('forecast-delta').textContent=cash(cost(p))+' грн';el('forecast-delta-percent').textContent=cash(cost(p)/10000)+' грн/т';
+    el('forecast-error').hidden=true;el('forecast-q').textContent=fmt(p.first_day_tons)+' т';el('forecast-observed').textContent=fmt(p.loading_hours)+' год';el('forecast-delta').textContent=cash(cost(p))+' грн';el('forecast-delta-percent').textContent=cash(cost(p)/10000)+' грн/т';
     el('forecast-status').textContent=p.admissible?'Попередньо допущено':'Норму не підтверджено';el('forecast-status').className=p.admissible?'forecast-pass':'forecast-fail';el('forecast-threshold').textContent=`Контроль: ${c.passed}/${c.runs} · мінімум повних діб прогнозно ${fmt(p.minimum_full_day_tons)} т`;
     el('forecast-bottleneck').textContent='Правило допуску: класифікатор + прогноз мінімальної повної доби ≥ 4000 т';
     info.textContent=`Планування: ${conf(key)} · вагова ${el('forecast-external').value}% · дорога до ${el('forecast-road').value}%. Контроль — середні п’яти прогонів. Відтворення — окремий запис seed 10000. Виконання 5/5 не гарантує майбутнього результату.`;
     const bars=el('forecast-bars');bars.replaceChildren();const max=Math.max(p.first_day_tons,p.minimum_full_day_tons,4000)*1.05;
     for(const [label,value,color]of [['Прогноз першої доби',p.first_day_tons,'#68d5c5'],['Прогноз мінімальної повної доби',p.minimum_full_day_tons,'#81a7d1'],['Норма',4000,'#d9b466']]){const row=document.createElement('div');row.innerHTML=`<label>${label}<b>${fmt(value)} т</b></label><div class="forecast-bar-track"><i style="width:${value/max*100}%;background:${color}"></i></div>`;bars.append(row);}
-    el('forecast-recommendation').textContent=best?`${conf(best.configuration)} · ${cash(cost(best))} грн`:'Допустимого складу в цій сітці немає.';
+    el('forecast-recommendation').textContent=best?`${best.configuration.split('_')[0]} авто · ${best.configuration.split('_')[1]} мехлопати · ${best.configuration.split('_')[2]} комплекти — ${cash(cost(best))} грн`:'Допустимого складу в цій сітці немає.';
     el('forecast-eligible').classList.remove('contract-hide');el('forecast-eligible').textContent=`Допущено ${eligible.length} із 153 складів. Контрольний вибір: ${reference?conf(reference.configuration):'немає'}. ${best&&reference?'Перевищення контрольного мінімуму для вибору ML: '+cash(cost(D.controls[best.configuration])-cost(D.controls[reference.configuration]))+' грн.':''}`;
     el('forecast-candidates').replaceChildren();eligible.slice(0,5).forEach(x=>{const tr=document.createElement('tr');for(const val of [...x.configuration.split('_').slice(0,3),cash(cost(x))]){const td=document.createElement('td');td.textContent=val;tr.append(td);}const td=document.createElement('td'),button=document.createElement('button');button.textContent='Переглянути';button.onclick=()=>{setInputs(x.configuration);renderContractForecast();};td.append(button);tr.append(td);el('forecast-candidates').append(tr);});
     el('forecast-hours').textContent=fmt(p.loading_hours)+' год';el('forecast-cost').textContent=cash(cost(p))+' грн';el('forecast-unit').textContent=cash(cost(p)/10000)+' грн/т';
@@ -91,7 +91,7 @@
     const end=sc.summary.all_returns_finish_min,loaded=time>=sc.summary.loading_finish_min-1e-6,returned=time>=end-1e-6;
     el('clock').textContent=clock(time)+' · доба '+(Math.floor((time-495)/1440)+1);
     el('kpi-fleet').textContent=`${sc.trucks} авто · ${sc.loaders} мехлопати / ${sc.unloaders} комплекти`;
-    el('contract-milestones').innerHTML=`<div>Вантаж на судні: <b>${loaded?'10 000 т · завершено':'погрузка триває'}</b><br><small>${fmt(sc.summary.loading_hours)} год від початку</small></div><div>Фінальні повернення: <b>${returned?'усі автомобілі повернулися':loaded?'автомобілі повертаються':'попереду'}</b><br><small>${fmt(sc.summary.all_returns_hours)} год від початку</small></div>`;
+    el('contract-milestones').innerHTML=`<div>Вантаж на судні: <b>${loaded?'10 000 т · завершено':'завантаження триває'}</b><br><small>${fmt(sc.summary.loading_hours)} год від початку</small></div><div>Фінальні повернення: <b>${returned?'усі автомобілі повернулися':loaded?'автомобілі повертаються':'попереду'}</b><br><small>${fmt(sc.summary.all_returns_hours)} год від початку</small></div>`;
     const complete=sc.usage.filter(u=>u.resource==='truck'&&u.accounting_finish_min<=time+1e-6).map(u=>'А'+u.unit_id.split(':')[1]);
     const outside=(sc.external_intervals||[]).find(o=>o.arrival<=time&&time<o.end);
     if(outside){const col=el('resource-columns').children[3],active=outside.start<=time,note=document.createElement('div');note.className='calendar-wait';note.textContent=active?'Стороннє зважування · платформа зайнята':'Сторонній потік очікує платформу';col.append(note);if(active){col.querySelector('.resource-column-head b').textContent='1 / 1';const empty=col.querySelector('.empty-slot');if(empty)empty.textContent='Обслуговування стороннього звернення';}}
@@ -102,7 +102,7 @@
     const chart=el('chart-content');for(let t=495+1440;t<end;t+=1440){const x=63+(t-495)/(end-495)*(1370-63),line=document.createElementNS(NS,'path');line.setAttribute('d',`M${x} 10V120`);line.setAttribute('stroke','#d8b66c');line.setAttribute('stroke-dasharray','4 4');chart.append(line);}
     const actual=estimateEconomics(sc,time),final=estimateEconomics(sc,end);
     el('econ-time').textContent=`На ${clock(time)} · ${fmt(actual.hours)} год від початку`;
-    el('econ-day').textContent=cash(final.total);el('econ-day').parentElement.lastChild.textContent=' грн';el('econ-day-total').textContent=`${cash(final.unit)} грн/т · ${fmt(sc.summary.loading_hours)} год погрузки`;
+    el('econ-day').textContent=cash(final.total);el('econ-day').parentElement.lastChild.textContent=' грн';el('econ-day-total').textContent=`${cash(final.unit)} грн/т · ${fmt(sc.summary.loading_hours)} год перевалки`;
     el('econ-volume').textContent=actual.tonnes?'На '+fmt(actual.tonnes)+' т доставленого вантажу':'Доставок поки немає';
     if(document.querySelector('[data-view="forecast"]').classList.contains('active'))renderContractForecast();
   }
